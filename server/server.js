@@ -51,6 +51,7 @@ var resolvers_1 = require("./resolvers");
 var db_1 = __importDefault(require("./models/db"));
 var userController_1 = require("./controllers/userController");
 var cookie_parser_1 = __importDefault(require("cookie-parser"));
+var util_1 = require("./util/util");
 function startApolloServer() {
     return __awaiter(this, void 0, void 0, function () {
         var app, PORT, apolloServer;
@@ -72,13 +73,17 @@ function startApolloServer() {
                         context: function (_a) {
                             var req = _a.req, res = _a.res;
                             return __awaiter(_this, void 0, void 0, function () {
+                                var token, user;
                                 return __generator(this, function (_b) {
-                                    // get the user token from the headers
-                                    // const token = req.headers.authorization.split(' ')[1] || '';
-                                    // // try to retrieve a user with the token
-                                    // const user = await getUser(token);
-                                    // // add the user to the context
-                                    return [2 /*return*/, { req: req, res: res, db: db_1.default }];
+                                    switch (_b.label) {
+                                        case 0:
+                                            token = req.headers.authorization.split(' ')[1] || '';
+                                            return [4 /*yield*/, (0, util_1.getUser)(token)];
+                                        case 1:
+                                            user = _b.sent();
+                                            // // add the user to the context
+                                            return [2 /*return*/, { req: req, res: res, db: db_1.default, user: user }];
+                                    }
                                 });
                             });
                         },
@@ -92,6 +97,45 @@ function startApolloServer() {
                     app.post('/login', userController_1.userController.loginAuth, function (req, res) {
                         return res.status(200).json(res.locals.user);
                     });
+                    app.post('/getId', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+                        var apiKey, result;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    apiKey = req.body.apiKey;
+                                    return [4 /*yield*/, db_1.default.query('SELECT id FROM projects WHERE api_key = $1', [apiKey])];
+                                case 1:
+                                    result = _a.sent();
+                                    return [2 /*return*/, res.status(200).json(result.rows[0])];
+                            }
+                        });
+                    }); });
+                    app.post('/metrics', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+                        var _a, projectId, query_string, operation_name, execution_time, success, result;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
+                                case 0:
+                                    _a = req.body, projectId = _a.projectId, query_string = _a.query_string, operation_name = _a.operation_name, execution_time = _a.execution_time, success = _a.success;
+                                    return [4 /*yield*/, db_1.default.query('INSERT INTO history_log(query_string, project_id, execution_time, success, operation_name) VALUES($1, $2, $3, $4, $5) RETURNING *;', [query_string, projectId, execution_time, success, operation_name])];
+                                case 1:
+                                    result = _b.sent();
+                                    return [2 /*return*/, res.status(200).json(result.rows[0])];
+                            }
+                        });
+                    }); });
+                    app.post('/devmetrics', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+                        var _a, projectId, query_string, operation_name, execution_time, success, result;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
+                                case 0:
+                                    _a = req.body, projectId = _a.projectId, query_string = _a.query_string, operation_name = _a.operation_name, execution_time = _a.execution_time, success = _a.success;
+                                    return [4 /*yield*/, db_1.default.query('INSERT INTO history_log_dev(query_string, project_id, execution_time, success, operation_name) VALUES($1, $2, $3, $4, $5) RETURNING *;', [query_string, projectId, execution_time, success, operation_name])];
+                                case 1:
+                                    result = _b.sent();
+                                    return [2 /*return*/, res.status(200).json(result.rows[0])];
+                            }
+                        });
+                    }); });
                     app.get('/', function (req, res) {
                         return res.status(200).sendFile(path_1.default.join(__dirname, '../dist/index.html'));
                     });

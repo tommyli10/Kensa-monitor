@@ -85,7 +85,15 @@ exports.resolvers = {
                 var result;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
-                        case 0: return [4 /*yield*/, db.query('SELECT * FROM users WHERE username = $1', [username])];
+                        case 0:
+                            if (user.username !== username) {
+                                throw new graphql_1.GraphQLError('Unauthenticated user', {
+                                    extensions: {
+                                        code: 'UNAUTHENTICATED USER'
+                                    }
+                                });
+                            }
+                            return [4 /*yield*/, db.query('SELECT * FROM users WHERE username = $1', [username])];
                         case 1:
                             result = _c.sent();
                             return [2 /*return*/, result.rows[0]];
