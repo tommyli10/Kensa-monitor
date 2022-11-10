@@ -73,15 +73,11 @@ function startApolloServer() {
                             var req = _a.req, res = _a.res;
                             return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_b) {
-                                    // COMMENT: Apollo GraphQL playground will not be able to introspect the schema if we do not comment out everything here
-                                    // Only return { req, res, db } for GraphQL playground to work
                                     // get the user token from the headers
-                                    // uncomment this if want to test on localhost:3000/graphql
                                     // const token = req.headers.authorization.split(' ')[1] || '';
                                     // // try to retrieve a user with the token
                                     // const user = await getUser(token);
                                     // // add the user to the context
-                                    // return { req, res, db, user };
                                     return [2 /*return*/, { req: req, res: res, db: db_1.default }];
                                 });
                             });

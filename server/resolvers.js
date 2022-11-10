@@ -40,6 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolvers = void 0;
+/* eslint-disable no-undef */
 var graphql_1 = require("graphql");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -159,9 +160,7 @@ exports.resolvers = {
                 var result;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
-                        case 0:
-                            console.log(operation_id);
-                            return [4 /*yield*/, db.query('SELECT * FROM resolver_log_dev WHERE operation_id = $1', [operation_id])];
+                        case 0: return [4 /*yield*/, db.query('SELECT * FROM resolver_log_dev WHERE operation_id = $1', [operation_id])];
                         case 1:
                             result = _c.sent();
                             return [2 /*return*/, result.rows];
@@ -369,9 +368,7 @@ exports.resolvers = {
                 var result;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
-                        case 0:
-                            console.log(id);
-                            return [4 /*yield*/, db.query('DELETE FROM history_log_dev WHERE id = $1', [Number(id)])];
+                        case 0: return [4 /*yield*/, db.query('DELETE FROM history_log_dev WHERE id = $1', [Number(id)])];
                         case 1:
                             _c.sent();
                             return [4 /*yield*/, db.query('DELETE FROM resolver_log_dev WHERE operation_id = $1 RETURNING *;', [Number(id)])];
@@ -438,7 +435,7 @@ exports.resolvers = {
                 var result;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
-                        case 0: return [4 /*yield*/, db.query('SELECT * FROM history_log_dev WHERE project_id = $1', [project_id])];
+                        case 0: return [4 /*yield*/, db.query('SELECT * FROM history_log_dev WHERE project_id = $1 ORDER BY created_at;', [project_id])];
                         case 1:
                             result = _c.sent();
                             return [2 /*return*/, result.rows];
